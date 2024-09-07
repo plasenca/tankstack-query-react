@@ -1,20 +1,20 @@
 import { LoadingSpinner } from "@/shared";
 import { IssueList } from "../components/IssueList";
 import { LabelPicker } from "../components/LabelPicker";
-import { useIssues } from "../hooks/useIssues";
 import { useState } from "react";
 import { State } from "../interfaces";
+import { useIssuesInfinite } from "../hooks/useIssuesInfinite";
 
-export const ListView = () => {
+export const ListViewInfinite = () => {
   const [state, setState] = useState<State>(State.All);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
-  const { issuesQuery, nextPage, page, prevPage } = useIssues({
+  const { issuesQuery } = useIssuesInfinite({
     state,
     selectedLabels,
   });
 
-  const issues = issuesQuery.data ?? [];
+  const issues = issuesQuery.data?.pages.flat() ?? [];
   const onLabelSelected = (label: string) => {
     if (selectedLabels.includes(label)) {
       setSelectedLabels(selectedLabels.filter((l) => l !== label));
@@ -29,29 +29,21 @@ export const ListView = () => {
         {issuesQuery.isLoading ? (
           <LoadingSpinner />
         ) : (
-          <>
+          <div className="flex flex-col justify-center">
             <IssueList
               issues={issues}
               onStateChange={setState}
               valueSelected={state}
             />
 
-            <div className="flex justify-between items-center">
-              <button
-                className="py-2 px-4 bg-blue-500 rounded-md hover:bg-blue-700 transition-all"
-                onClick={prevPage}
-              >
-                Previous
-              </button>
-              <span>{page}</span>
-              <button
-                className="py-2 px-4 bg-blue-500 rounded-md hover:bg-blue-700 transition-all"
-                onClick={nextPage}
-              >
-                Next
-              </button>
-            </div>
-          </>
+            <button
+              className="py-2 px-4 bg-blue-500 rounded-md hover:bg-blue-700 transition-all disabled:bg-slate-700 disabled:cursor-not-allowed"
+              onClick={() => issuesQuery.fetchNextPage()}
+              disabled={issuesQuery.isFetchingNextPage}
+            >
+              {issuesQuery.isFetchingNextPage ? "Loading..." : "Load more"}
+            </button>
+          </div>
         )}
       </div>
 
