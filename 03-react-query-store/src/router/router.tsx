@@ -7,6 +7,7 @@ import {
   WomensPage,
 } from "../products";
 import { ErrorPage } from "../ErrorPage";
+import { ProductPage } from "../products/pages/ProductPage";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: "women",
         element: <WomensPage />,
+      },
+      {
+        path: "products/:id",
+        element: <ProductPage />,
       },
       {
         path: "new",

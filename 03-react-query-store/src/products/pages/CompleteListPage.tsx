@@ -1,11 +1,20 @@
 import { ProductList } from "..";
+import { useProducts } from "../hooks/useProducts";
 
 export const CompleteListPage = () => {
-  return (
-    <div className="flex-col">
-      <h1 className="text-2xl font-bold">Todos los productos</h1>
+  const { productsQuery } = useProducts({});
 
-      <ProductList />
+  const products = productsQuery.data ?? [];
+
+  return (
+    <div className="flex-col w-full">
+      <h1 className="text-2xl font-bold">All Products</h1>
+
+      {productsQuery.isLoading ? (
+        <p>Cargando...</p>
+      ) : (
+        <ProductList products={products} />
+      )}
     </div>
   );
 };
